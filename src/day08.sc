@@ -17,7 +17,7 @@ val res = input.foldLeft(lcd)((lcd, action) => action match {
 
   case a if a.startsWith("rotate row") =>
     val pattern = "rotate row y=(\\d+) by (\\d+)".r
-    val data = pattern.findAllIn(a).matchData.next
+    val data = pattern.findFirstMatchIn(a).get
     val y :: n :: Nil = data.subgroups.map(_.toInt)
 
     val row = lcd(y).clone
@@ -32,7 +32,7 @@ val res = input.foldLeft(lcd)((lcd, action) => action match {
 
   case a if a.startsWith("rotate column") =>
     val pattern = "rotate column x=(\\d+) by (\\d+)".r
-    val data = pattern.findAllIn(a).matchData.next
+    val data = pattern.findFirstMatchIn(a).get
     val x :: n :: Nil = data.subgroups.map(_.toInt)
 
     val row = lcd.transpose.toList(x)
