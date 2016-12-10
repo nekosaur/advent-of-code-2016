@@ -8,7 +8,7 @@ case class State(bot: Int, chips: List[Int])
 var queue = new mutable.PriorityQueue[State]()(Ordering.by(_.chips.length))
 var outputs = mutable.Map[Int, Int]()
 
-val chips = input.filter(_.startsWith("value")).map(c => {
+input.filter(_.startsWith("value")).map(c => {
   val pattern = "value (\\d+) goes to bot (\\d+)".r
   val m = pattern.findFirstMatchIn(c).get
 
