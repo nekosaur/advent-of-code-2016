@@ -15,6 +15,7 @@ val chips = input.filter(_.startsWith("value")).map(c => {
   State(m.group(2).toInt, List(m.group(1).toInt))
 }).groupBy(_.bot)
   .map(t => State(t._1, t._2.flatMap(_.chips)))
+  .foreach(queue.enqueue(_))
 
 val bots = input.filter(_.startsWith("bot")).map(b => {
   val pattern = "bot (\\d+) gives low to (bot|output) (\\d+) and high to (bot|output) (\\d+)".r
