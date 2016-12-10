@@ -1,7 +1,7 @@
 import io._
 val input = Source.fromFile("day09.txt").getLines.toList.head
 
-def decompress(xs: String, recurse: Boolean) = {
+def decompress(recurse: Boolean)(xs: String) = {
   def rec(xs: List[Char], length: BigInt): BigInt = xs match {
     case Nil => length
     case y :: ys if y == '(' =>
@@ -17,6 +17,6 @@ def decompress(xs: String, recurse: Boolean) = {
   rec(xs.toList, BigInt.apply(0))
 }
 
-decompress(input, false)
+decompress(false)(input)
 
-decompress(input, true)
+decompress(true)(input)
