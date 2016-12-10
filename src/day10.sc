@@ -12,11 +12,9 @@ val chips = input.filter(_.startsWith("value")).map(c => {
   val pattern = "value (\\d+) goes to bot (\\d+)".r
   val m = pattern.findFirstMatchIn(c).get
 
-  (m.group(2).toInt, m.group(1).toInt)
-}).groupBy(_._1)
-  .mapValues(x => x.map(y => y._2))
-  .map(x => State(x._1, x._2))
-  .foreach(queue.enqueue(_))
+  State(m.group(2).toInt, List(m.group(1).toInt))
+}).groupBy(_.bot)
+  .map(t => State(t._1, t._2.flatMap(_.chips)))
 
 val bots = input.filter(_.startsWith("bot")).map(b => {
   val pattern = "bot (\\d+) gives low to (bot|output) (\\d+) and high to (bot|output) (\\d+)".r
