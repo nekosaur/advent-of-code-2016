@@ -21,11 +21,11 @@ def check(state: State): Boolean = {
 
 def generate(state: State, visited: Set[State]): Seq[State] = {
   val actions = List(
-  Floor(0, 1, 0, 1), // move 1 generator
-  Floor(0, 2, 0, 1), // move 2 generators
-  Floor(0, 0, 1, 1), // move 1 chip
-  Floor(0, 0, 2, 1), // move 2 chips
-  Floor(0, 1, 1, 1)  // move 1 generator & 1 chip
+    Floor(0, 1, 0, 1), // move 1 generator
+    Floor(0, 2, 0, 1), // move 2 generators
+    Floor(0, 0, 1, 1), // move 1 chip
+    Floor(0, 0, 2, 1), // move 2 chips
+    Floor(0, 1, 1, 1)  // move 1 generator & 1 chip
   )
 
   val current = state.filter(_.b == 1).head
