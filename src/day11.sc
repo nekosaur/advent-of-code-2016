@@ -11,11 +11,11 @@ case class Data(queue: Queue[Node], visited: Set[State])
 def check(state: State): Boolean = {
   state.foldLeft(true)((b, f) => {
     if (f.g < 0 || f.c < 0) // numbers lower than 0 are not possible
-    false
+      false
     else if (f.g > 0 && f.c > f.g) // we can't have loose chips, they will be fried
-    false
+      false
     else
-    b && true
+      b && true
   })
 }
 
