@@ -30,8 +30,8 @@ def generate(state: State, visited: Set[State]): Seq[State] = {
 
   val current = state.filter(_.b == 1).head
   val generated = for {
-               a <- actions
-               i <- List(current.l - 1, current.l + 1).filter(x => x >= 0 && x <= 3)
+    a <- actions
+    i <- List(current.l - 1, current.l + 1).filter(x => x >= 0 && x <= 3)
   } yield {
     state.map {
       case f if f.l == current.l => f - a
