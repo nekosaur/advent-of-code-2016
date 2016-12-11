@@ -44,7 +44,7 @@ def generate(state: State, visited: Set[State]): Seq[State] = {
 }
 
 def solve(start: State, goal: State): Int = {
-  def run(data: Data): Int = {
+  def bfs(data: Data): Int = {
     if (data.queue.nonEmpty) {
       val (node, queue) = data.queue.dequeue
 
@@ -54,11 +54,11 @@ def solve(start: State, goal: State): Int = {
       val states = generate(node.state, data.visited)
       val nodes = states.map(s => Node(s, node.moves + 1))
 
-      run(Data(queue ++ nodes, data.visited ++ states))
+      bfs(Data(queue ++ nodes, data.visited ++ states))
     } else { -1 }
   }
 
-  run(Data(Queue(Node(start, 0)), Set()))
+  bfs(Data(Queue(Node(start, 0)), Set()))
 }
 
 val _startA = List(Floor(0, 3, 1, 1), Floor(1, 0, 2, 0), Floor(2, 2, 2, 0), Floor(3, 0, 0, 0))
