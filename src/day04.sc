@@ -5,7 +5,7 @@ case class Room(name: String, sector: Int, checksum: String)
 
 val rooms = fileLines.map(l => {
   val pattern = "(.+)-(\\d+)\\[(\\w+)\\]$".r
-  val m = pattern.findAllIn(l).matchData.next()
+  val m = pattern.findFirstMatchIn(l).get
 
   Room(m.group(1), m.group(2).toInt, m.group(3))
 })

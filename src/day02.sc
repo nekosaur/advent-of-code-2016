@@ -1,7 +1,7 @@
 import io._
 val input = Source.fromFile("day02.txt").getLines.toList
 
-val numpad = List[List[Int]](
+val numpad = List(
   List[Int](1, 2, 3),
   List[Int](4, 5, 6),
   List[Int](7, 8, 9)
@@ -22,7 +22,7 @@ input.foldLeft(Data(Point(1, 1), ""))((d, r) => {
   Data(pos, d.pwd + numpad(pos.y)(pos.x))
 }).pwd
 
-val extreme_numpad = List[List[Char]](
+val extreme_numpad = List(
   List[Char]('X', 'X', '1', 'X', 'X'),
   List[Char]('X', '2', '3', '4', 'X'),
   List[Char]('5', '6', '7', '8', '9'),

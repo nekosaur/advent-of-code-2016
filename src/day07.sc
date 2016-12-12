@@ -1,38 +1,40 @@
 import io._
 val input = Source.fromFile("day07.txt").getLines.toList
 
-case class IP(supernet: List[String], hypernet: List[String])
+case class IP(supernets: List[String], hypernets: List[String])
 
 val ips = input.map(l => {
-  var supernets = List[String]()
-  var hypernets = List[String]()
-  var tmp = ""
-  for (i <- l.indices) {
-    if (l(i) == '[') {
-      supernets = supernets :+ tmp
-      tmp = ""
-    } else if (l(i) == ']') {
-      hypernets = hypernets :+ tmp
-      tmp = ""
-    } else
-      tmp = tmp + l(i)
-  }
+  val supernets = "^(\\w+)|\\](\\w+)\\[|(\\w+)$".r
+    .findAllMatchIn(l)
+    .flatMap(m => m.subgroups.filter(_ != null))
 
-  supernets = supernets :+ tmp
+  var hypernets = "\\[(\\w+)\\]".r
+    .findAllMatchIn(l)
+    .flatMap(m => m.subgroups)
 
-  IP(supernets, hypernets)
+  IP(supernets.toList, hypernets.toList)
 })
 
-ips.foldLeft(0)((c, ip) => {
-  val supernet = ip.supernet.flatMap(l => l.sliding(4)).filter(s => s(0) != s(1) && s.equals(s.reverse))
-  val hypernet = ip.hypernet.flatMap(l => l.sliding(4)).filter(s => s(0) != s(1) && s.equals(s.reverse))
+ips.count(ip => {
+  val supernets = ip.supernets
+    .flatMap(l => l.sliding(4))
+    .filter(s => s(0) != s(1) && s.equals(s.reverse))
 
-  if (hypernet.isEmpty && supernet.nonEmpty) c + 1 else c
+  val hypernets = ip.hypernets
+    .flatMap(l => l.sliding(4))
+    .filter(s => s(0) != s(1) && s.equals(s.reverse))
+
+  hypernets.isEmpty && supernets.nonEmpty
 })
 
-ips.foldLeft(0)((c, ip) => {
-  val supernet = ip.supernet.flatMap(l => l.sliding(3)).filter(s => s(0) == s(2))
-  val hypernet = ip.hypernet.flatMap(l => l.sliding(3)).filter(s => s(0) == s(2))
+ips.count(ip => {
+  val supernets = ip.supernets
+    .flatMap(l => l.sliding(3))
+    .filter(s => s(0) == s(2))
 
-  if (supernet.exists(aba => hypernet.contains(aba(1).toString + aba(0) + aba(1)))) c + 1 else c
+  val hypernets = ip.hypernets
+    .flatMap(l => l.sliding(3))
+    .filter(s => s(0) == s(2))
+
+  supernets.exists(aba => hypernets.contains(aba(1).toString + aba(0) + aba(1)))
 })

@@ -14,35 +14,6 @@ def md5(s: String): String = {
   hex.toString
 }
 
-/*
-var seen = List[Int]()
-Stream.from(0)
-  .filter(i => {
-    val hash = md5("ffykfhsq" + i.toString)
-    val index = hash.drop(5).head.asDigit
-
-    if (!hash.startsWith("00000"))
-      false
-    else if (index < 0 || index > 7)
-      false
-    else if (seen.contains(index))
-      false
-    else {
-      seen = seen :+ index
-      true
-    }
-  })
-  .take(8)
-  .map(i => {
-    val hash = md5("ffykfhsq" + i.toString)
-    val index = hash.drop(5).head.asDigit
-    val char = hash.drop(6).head
-
-    (index, char)
-  })
-  .mkString
-*/
-
 val pwd = Array[Char]('.','.','.','.','.','.','.','.')
 var index = 0
 val input = "ffykfhsq"
