@@ -32,11 +32,9 @@ def solve(registers: Map[String, Int], instructions: List[String]) = {
 
         case "jnz" =>
           val x :: y :: Nil = data
-          val v = if (c.registers.contains(x)) c.registers(x) else x.toInt
-          if (v != 0)
-            rec(Computer(c.registers, c.i + y.toInt, c.instructions))
-          else
-            rec(Computer(c.registers, c.i + 1, c.instructions))
+          val j = if (c.registers.contains(x)) c.registers(x) else x.toInt
+          val v = if (j != 0) y.toInt else 1
+          rec(Computer(c.registers, c.i + v, c.instructions))
       }
     }
   }
