@@ -9,10 +9,11 @@ val _registersB = Map[String, Int]("a" -> 0, "b" -> 0, "c" -> 1, "d" -> 0)
 
 def solve(registers: Map[String, Int], instructions: List[String]) = {
   @tailrec
-  def rec(c: Computer): Computer = {
-    if (c.i >= c.instructions.length) {
+  def rec(c: Computer): Computer = c.i match {
+    case i if i >= c.instructions.length =>
       c
-    } else {
+
+    case i =>
       val instr :: data = c.instructions(c.i).split(" ").toList
       instr match {
         case "cpy" =>
@@ -36,7 +37,6 @@ def solve(registers: Map[String, Int], instructions: List[String]) = {
           val v = if (j != 0) y.toInt else 1
           rec(Computer(c.registers, c.i + v, c.instructions))
       }
-    }
   }
 
   rec(Computer(registers, 0, instructions))
