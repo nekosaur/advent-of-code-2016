@@ -41,7 +41,7 @@ def solve(start: Point, goal: Point, n: Int) = {
     } else { false }
   }
 
-  rec(Data(Map().updated(start, '.'), Set(), Queue().enqueue(start), Map().updated(start, 0)))
+  rec(Data(Map().updated(start, '.'), Set() + start, Queue().enqueue(start), Map().updated(start, 0)))
 }
 
 solve(Point(1, 1), Point(31, 39), 1350)
