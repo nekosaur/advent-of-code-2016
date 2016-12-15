@@ -25,10 +25,10 @@ def solve(input: String, stretch: Int) = {
 
   def three(s: String) = {
     def rec(xs: List[Char], n: Int): Option[Char] = xs match {
-      case y :: _ if n == 2 => Option.apply(y)
-      case _ :: Nil => Option.empty
+      case y :: _ if n == 2        => Option.apply(y)
+      case _ :: Nil                => Option.empty
       case y :: ys if y == ys.head => rec(ys, n + 1)
-      case _ :: ys => rec(ys, 0)
+      case _ :: ys                 => rec(ys, 0)
     }
 
     rec(s.toList, 0)
