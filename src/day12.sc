@@ -43,5 +43,4 @@ def solve(registers: Map[String, Int], instructions: List[String]) = {
 }
 
 solve(_registersA, input)
-
 solve(_registersB, input)

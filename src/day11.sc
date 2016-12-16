@@ -43,19 +43,20 @@ def generate(state: State, visited: Set[State]): Seq[State] = {
   generated.filter(s => check(s) && !visited.contains(s))
 }
 
-def solve(start: State, goal: State): Int = {
-  def bfs(data: Data): Int = {
-    if (data.queue.nonEmpty) {
-      val (node, queue) = data.queue.dequeue
+def solve(start: State, goal: State) = {
+  def bfs(data: Data): Option[Int] = data.queue match {
+    case q if q.isEmpty => None
+    case q =>
+      val (node, queue) = q.dequeue
 
-      if (node.state == goal)
-        return node.moves
+      if (node.state == goal) {
+        Option(node.moves)
+      } else {
+        val states = generate(node.state, data.visited)
+        val nodes = states.map(s => Node(s, node.moves + 1))
 
-      val states = generate(node.state, data.visited)
-      val nodes = states.map(s => Node(s, node.moves + 1))
-
-      bfs(Data(queue ++ nodes, data.visited ++ states))
-    } else { -1 }
+        bfs(Data(queue ++ nodes, data.visited ++ states))
+      }
   }
 
   bfs(Data(Queue(Node(start, 0)), Set()))
@@ -68,3 +69,4 @@ val _startB = List(Floor(0, 5, 3, 1), Floor(1, 0, 2, 0), Floor(2, 2, 2, 0), Floo
 val _goalB = List(Floor(0, 0, 0, 0), Floor(1, 0, 0, 0), Floor(2, 0, 0, 0), Floor(3, 7, 7, 1))
 
 solve(_startA, _goalA)
+solve(_startB, _goalB)

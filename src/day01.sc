@@ -27,28 +27,21 @@ def isLeftTurn(p: Point, q: Point, r: Point): Boolean = {
   if (m < 0) true else false
 }
 
-def check(lines: List[Line], line: Line): Option[Point] = {
-  if (lines.length <= 0)
-    return Option.empty
+def intersect(a: Line, b: Line) = {
+  if (a.e != b.s && a.s != b.e) {
+    val first = isLeftTurn(a.s, a.e, b.s)
+    if (isLeftTurn(a.s, a.e, b.e) != first) {
+      val second = isLeftTurn(b.s, b.e, a.s)
+      if (isLeftTurn(b.s, b.e, a.e) != second) true else false
+    } else { false }
+  } else { false }
+}
 
-  for (i <- lines.indices) {
-    val l = lines(i)
-
-    if (l.e != line.s && l.s != line.e) {
-      var leftTurn = isLeftTurn(l.s, l.e, line.s)
-      if (isLeftTurn(l.s, l.e, line.e) != leftTurn) {
-        leftTurn = isLeftTurn(line.s, line.e, l.s)
-        if (isLeftTurn(line.s, line.e, l.e) != leftTurn) {
-          if (l.s.x == l.e.x)
-            return Option.apply(Point(l.s.x, line.s.y))
-          else
-            return Option.apply(Point(l.s.y, line.s.x))
-        }
-      }
-    }
-  }
-
-  return Option.empty
+def check(lines: List[Line], line: Line): Option[Point] = lines match {
+  case Nil => None
+  case y :: _ if intersect(y, line) =>
+    if (y.s.x == y.e.x) Option(Point(y.s.x, line.s.y)) else Option(Point(y.s.y, line.s.x))
+  case _ :: ys => check(ys, line)
 }
 
 val actions = input.map(s => Action(s(0), s.substring(1).toInt))
@@ -56,16 +49,12 @@ val start = Data(Point(0, 0), List(), Direction.UP)
 
 val res = actions.foldLeft(start)((d, a) => {
   val dir = if (a.c == 'R') d.d.right else d.d.left
-  var pos: Point = null
 
-  if (dir == Direction.UP) {
-    pos = Point(d.p.x, d.p.y + a.n)
-  } else if (dir == Direction.DOWN) {
-    pos = Point(d.p.x, d.p.y - a.n)
-  } else if (dir == Direction.LEFT) {
-    pos = Point(d.p.x - a.n, d.p.y)
-  } else {
-    pos = Point(d.p.x + a.n, d.p.y)
+  val pos = dir match {
+    case Direction.UP    => Point(d.p.x, d.p.y + a.n)
+    case Direction.DOWN  => Point(d.p.x, d.p.y - a.n)
+    case Direction.LEFT  => Point(d.p.x - a.n, d.p.y)
+    case Direction.RIGHT => Point(d.p.x + a.n, d.p.y)
   }
 
   val l = Line(d.p, pos)

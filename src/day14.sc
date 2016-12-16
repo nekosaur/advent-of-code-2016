@@ -25,8 +25,8 @@ def solve(input: String, stretch: Int) = {
 
   def three(s: String) = {
     def rec(xs: List[Char], n: Int): Option[Char] = xs match {
-      case y :: _ if n == 2        => Option.apply(y)
-      case _ :: Nil                => Option.empty
+      case y :: _ if n == 2        => Option(y)
+      case _ :: Nil                => None
       case y :: ys if y == ys.head => rec(ys, n + 1)
       case _ :: ys                 => rec(ys, 0)
     }
@@ -34,13 +34,13 @@ def solve(input: String, stretch: Int) = {
     rec(s.toList, 0)
   }
 
-  def five(s: String, c: Char) = s.contains(c.toString * 5)
+  def five(s: String, c: Option[Char]) = s.contains(c.map(_.toString * 5).mkString)
 
   Stream.from(0).map(i => (i, md5stretch(input, i, stretch))).filter(t => {
     val (index, hash) = t
     val c = three(hash)
 
-    c.isDefined && (index + 1 to index + 1000).map(j => md5stretch(input, j, stretch)).exists(five(_, c.get))
+    c.isDefined && (index + 1 to index + 1000).map(j => md5stretch(input, j, stretch)).exists(five(_, c))
   }).drop(63).head
 }
 
