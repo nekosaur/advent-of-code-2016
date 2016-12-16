@@ -1,52 +1,58 @@
 import io._
-import scala.collection.mutable
 val input = Source.fromFile("day10.txt").getLines.toList
 
-case class Bot(id: Int, low_target: String, low: Int, high_target: String, high: Int)
-case class State(bot: Int, chips: List[Int])
+case class Action(typ: String, target: String, id: Int)
+case class StateChange(bot: Int, actions: List[Action])
+case class State(bots: Map[Int, Vector[Int]], outputs: Map[Int, Int])
 
-var queue = new mutable.PriorityQueue[State]()(Ordering.by(_.chips.length))
-var outputs = mutable.Map[Int, Int]()
-
-input.filter(_.startsWith("value")).map(c => {
+val _bots = input.filter(_.startsWith("value")).map(c => {
   val pattern = "value (\\d+) goes to bot (\\d+)".r
   val m = pattern.findFirstMatchIn(c).get
 
-  State(m.group(2).toInt, List(m.group(1).toInt))
-}).groupBy(_.bot)
-  .map(t => State(t._1, t._2.flatMap(_.chips)))
-  .foreach(queue.enqueue(_))
+  (m.group(2).toInt, m.group(1).toInt)
+}).groupBy(_._1)
+  .mapValues(_.map(_._2).toVector)
 
-val bots = input.filter(_.startsWith("bot")).map(b => {
+val _actions = input.filter(_.startsWith("bot")).map(b => {
   val pattern = "bot (\\d+) gives low to (bot|output) (\\d+) and high to (bot|output) (\\d+)".r
   val m = pattern.findFirstMatchIn(b).get
   val id :: low_target :: low :: high_target :: high :: Nil = m.subgroups
 
-  if (!queue.exists(_.bot == id.toInt))
-    queue.enqueue(State(id.toInt, List()))
-
-  (id.toInt, Bot(id.toInt, low_target, low.toInt, high_target, high.toInt))
+  (id.toInt, StateChange(id.toInt, List(Action("low", low_target, low.toInt), Action("high", high_target, high.toInt))))
 }).toMap
 
-do {
-  val a = queue.dequeue()
-  val b = bots(a.bot)
-  val low :: high :: Nil = a.chips.sorted
+def apply(state: State, change: StateChange) = {
+  val chips = state.bots(change.bot).sorted
 
-  if (a.chips.contains(61) && a.chips.contains(17))
-    println("Bot is " + a.bot)
+  if (chips(0) == 17 && chips(1) == 61)
+    println("Bot " + change.bot)
 
-  if (b.low_target == "bot") {
-    val low_chips = queue.find(p => p.bot == b.low).get.chips
-    queue = queue.filter(_.bot != b.low)
-    queue.enqueue(State(b.low, low_chips :+ low))
-  } else { outputs(b.low) = low }
-  if (b.high_target == "bot") {
-    val high_chips = queue.find(p => p.bot == b.high).get.chips
-    queue = queue.filter(_.bot != b.high)
-    queue.enqueue(State(b.high, high_chips :+ high))
-  } else { outputs(b.high) = high }
+  change.actions.foldLeft(state)((s, a) => {
+    val v = if (a.typ == "low") chips(0) else chips(1)
+    if (a.target == "bot") {
+      val from = s.bots(change.bot).filter(_ != v)
+      val to = s.bots(a.id) :+ v
+      State(s.bots.updated(change.bot, from).updated(a.id, to), s.outputs)
+    } else {
+      val from = s.bots(change.bot).filter(_ != v)
+      State(s.bots.updated(change.bot, from), s.outputs.updated(a.id, v))
+    }
+  })
+}
 
-} while (queue.exists(p => p.chips.length > 1))
+def solve(bots: Map[Int, Vector[Int]], actions: Map[Int, StateChange]) = {
+  def rec(state: State): State = state.bots match {
+    case b if !b.exists(_._2.length > 1) => state
+    case _ =>
+      val bot = state.bots.find(_._2.length == 2).get
+      val change = actions(bot._1)
 
-outputs(0) * outputs(1) * outputs(2)
+      rec(apply(state, change))
+  }
+
+  rec(State(bots.withDefaultValue(Vector()), Map().withDefaultValue(0)))
+}
+
+val res = solve(_bots, _actions)
+
+res.outputs(0) * res.outputs(1) * res.outputs(2)
