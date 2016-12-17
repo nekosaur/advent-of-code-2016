@@ -18,38 +18,32 @@ case class State(pos: Point, hash: String)
 case class Direction(c: Char, p: Point)
 
 def solve(input: String) = {
+  val dirs = List(
+    Direction('U', Point(0, -1)),
+    Direction('D', Point(0, 1)),
+    Direction('L', Point(-1, 0)),
+    Direction('R', Point(1, 0)))
+
   def inside(p: Point) = p.x >= 0 && p.x < 4 && p.y >= 0 && p.y < 4
 
-  def hash(s: String) = {
-    md5(s).take(4).map {
-      case c if c.isDigit || c == 'a' => false
-      case _ => true
-    }
+  def hash(s: String) = md5(s).take(4).map {
+    case c if c.isDigit || c == 'a' => false
+    case _ => true
   }
 
-  def neighbours(state: State) = {
-    val dirs = List(
-      Direction('U', Point(0, -1)),
-      Direction('D', Point(0, 1)),
-      Direction('L', Point(-1, 0)),
-      Direction('R', Point(1, 0)))
-
-    hash(state.hash).zip(dirs).collect {
-      case (b, d) if b && inside(state.pos + d.p) => State(state.pos + d.p, state.hash + d.c)
-    }
+  def neighbours(state: State) = hash(state.hash).zip(dirs).collect {
+    case (b, d) if b && inside(state.pos + d.p) => State(state.pos + d.p, state.hash + d.c)
   }
 
-  def rec(queue: Queue[State], paths: List[String]): List[String] = {
-    if (queue.isEmpty)
-      paths
-    else {
+  def rec(queue: Queue[State], paths: List[String]): List[String] = queue match {
+    case Queue() => paths
+    case _ =>
       val (s, q) = queue.dequeue
 
-      if (s.pos == Point(3, 3))
-        rec(q, paths :+ s.hash.substring(input.length))
-      else
-        rec(q.enqueue(neighbours(s)), paths)
-    }
+      s.pos match {
+        case Point(3, 3) => rec(q, paths :+ s.hash.substring(input.length))
+        case _           => rec(q.enqueue(neighbours(s)), paths)
+      }
   }
 
   rec(Queue(State(Point(0, 0), input)), List())
@@ -59,4 +53,3 @@ val paths = solve("yjjvjgan")
 
 paths.head
 paths.last.length
-
