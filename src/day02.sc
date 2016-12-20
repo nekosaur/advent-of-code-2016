@@ -1,10 +1,10 @@
 import io._
 val input = Source.fromFile("day02.txt").getLines.toList
 
-val numpad = List(
-  List[Int](1, 2, 3),
-  List[Int](4, 5, 6),
-  List[Int](7, 8, 9)
+val numpad = Vector(
+  Vector[Int](1, 2, 3),
+  Vector[Int](4, 5, 6),
+  Vector[Int](7, 8, 9)
 )
 
 case class Point(x: Int, y: Int)
@@ -22,12 +22,12 @@ input.foldLeft(Data(Point(1, 1), ""))((d, r) => {
   Data(pos, d.pwd + numpad(pos.y)(pos.x))
 }).pwd
 
-val extreme_numpad = List(
-  List[Char]('X', 'X', '1', 'X', 'X'),
-  List[Char]('X', '2', '3', '4', 'X'),
-  List[Char]('5', '6', '7', '8', '9'),
-  List[Char]('X', 'A', 'B', 'C', 'X'),
-  List[Char]('X', 'X', 'D', 'X', 'X')
+val extreme_numpad = Vector(
+  Vector[Char]('X', 'X', '1', 'X', 'X'),
+  Vector[Char]('X', '2', '3', '4', 'X'),
+  Vector[Char]('5', '6', '7', '8', '9'),
+  Vector[Char]('X', 'A', 'B', 'C', 'X'),
+  Vector[Char]('X', 'X', 'D', 'X', 'X')
 )
 
 def valid(x: Int, y: Int): Boolean = extreme_numpad(y)(x) != 'X'

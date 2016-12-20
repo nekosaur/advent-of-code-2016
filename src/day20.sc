@@ -21,9 +21,9 @@ def solveA(list: List[Blacklist]) = {
 
 def solveB(list: List[Blacklist]) = {
   val res = list.sortBy(_.from).foldLeft(State(Blacklist(0, 0), List[BigInt]())) {
-    case (s, b) if b.to < s.c.to => s
-    case (s, b) if b.from - s.c.to <= 1 && b.to > s.c.to => State(Blacklist(s.c.from, b.to), s.l)
-    case (s, b) => State(b, s.l :+ (b.from - s.c.to - 1))
+    case (State(c, l), b) if b.to < c.to => State(c, l)
+    case (State(c, l), b) if b.from - c.to <= 1 && b.to > c.to => State(Blacklist(c.from, b.to), l)
+    case (State(c, l), b) => State(b, l :+ (b.from - c.to - 1))
   }
 
   res.l.sum

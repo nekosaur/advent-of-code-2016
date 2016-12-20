@@ -1,5 +1,3 @@
-import java.util.concurrent.TimeUnit
-
 val _input = "10111011111001111"
 
 def generate(input: String, length: Int) = {

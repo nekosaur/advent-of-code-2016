@@ -45,9 +45,9 @@ def generate(state: State, visited: Set[State]): Seq[State] = {
 
 def solve(start: State, goal: State) = {
   def bfs(data: Data): Option[Int] = data.queue match {
-    case q if q.isEmpty => None
-    case q =>
-      val (node, queue) = q.dequeue
+    case Queue() => None
+    case _ =>
+      val (node, queue) = data.queue.dequeue
 
       if (node.state == goal) {
         Option(node.moves)

@@ -32,7 +32,8 @@ def apply(state: State, change: StateChange) = {
     if (a.target == "bot") {
       val from = s.bots(change.bot).filter(_ != v)
       val to = s.bots(a.id) :+ v
-      State(s.bots.updated(change.bot, from).updated(a.id, to), s.outputs)
+
+      s.copy(bots = s.bots.updated(change.bot, from).updated(a.id, to))
     } else {
       val from = s.bots(change.bot).filter(_ != v)
       State(s.bots.updated(change.bot, from), s.outputs.updated(a.id, v))
@@ -42,7 +43,7 @@ def apply(state: State, change: StateChange) = {
 
 def solve(bots: Map[Int, Vector[Int]], actions: Map[Int, StateChange]) = {
   def rec(state: State): State = state.bots match {
-    case b if !b.exists(_._2.length > 1) => state
+    case _ if !state.bots.exists(_._2.length > 1) => state
     case _ =>
       val bot = state.bots.find(_._2.length == 2).get
       val change = actions(bot._1)

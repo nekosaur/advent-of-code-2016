@@ -2,7 +2,7 @@ import io._
 val input = Source.fromFile("day08.txt").getLines.toList
 
 val (width, height) = (50, 6)
-val lcd = List.fill(height)(List.fill(width)(' '))
+val lcd = Vector.fill(height)(Vector.fill(width)(' '))
 
 val res = input.foldLeft(lcd)((lcd, action) => action match {
   case a if a.startsWith("rect") =>

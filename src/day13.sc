@@ -25,20 +25,20 @@ def solve(start: Point, goal: Point, n: Int) = {
   }
 
   def rec(data: Data): Boolean = data.queue match {
-    case queue if queue.isEmpty => false
-    case queue =>
-      val (p, q) = queue.dequeue
+    case Queue() => false
+    case _ =>
+      val (p, q) = data.queue.dequeue
 
-      if (p == goal) {
-        println("Locs in 50 moves or less = " + data.moves.count(t => t._2 <= 50))
-        println("Moves to goal = " + data.moves(p))
+      p match {
+        case `goal` =>
+          println("Locs in 50 moves or less = " + data.moves.count(t => t._2 <= 50))
+          println("Moves to goal = " + data.moves(p))
+          true
+        case _ =>
+          val (maze, n) = neighbours(p, data.visited, data.maze)
+          val moves = n.map(pp => (pp, data.moves(p) + 1))
 
-        true
-      } else {
-        val (maze, n) = neighbours(p, data.visited, data.maze)
-        val moves = n.map(pp => (pp, data.moves(p) + 1))
-
-        rec(Data(maze, data.visited + p, q ++ n, data.moves ++ moves))
+          rec(Data(maze, data.visited + p, q ++ n, data.moves ++ moves))
       }
   }
 

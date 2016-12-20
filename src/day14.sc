@@ -1,7 +1,7 @@
 import java.security.MessageDigest
 
 def md5(s: String): String = {
-  val hash = MessageDigest.getInstance("MD5");
+  val hash = MessageDigest.getInstance("MD5")
   val hashed = hash.digest(s.getBytes())
 
   hashed.map {

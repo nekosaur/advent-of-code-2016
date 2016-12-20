@@ -18,11 +18,9 @@ def check(disks: List[Disk]) = {
   rec(disks.tick)
 }
 
-def solve(disks: List[Disk]) = {
-  Stream.from(1)
-        .scanLeft(State(0, disks))((s, t) => State(t, s.d.tick))
-        .dropWhile(s => !check(s.d))
-}
+def solve(disks: List[Disk]) = Stream.from(1)
+                                     .scanLeft(State(0, disks))((s, t) => State(t, s.d.tick))
+                                     .dropWhile(s => !check(s.d))
 
-solve(_disksA)
-solve(_disksB)
+solve(_disksA).head.t
+solve(_disksB).head.t

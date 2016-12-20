@@ -1,9 +1,7 @@
 var _input = ".^^^^^.^^.^^^.^...^..^^.^.^..^^^^^^^^^^..^...^^.^..^^^^..^^^^...^.^.^^^^^^^^....^..^^^^^^.^^^.^^^.^^"
 
 def char(row: Vector[Char], i: Int) = {
-  val j = i + 1
-
-  row.slice(j - 1, j + 2) match {
+  row.slice(i, i + 3) match {
     case Seq(x, _, y) if x == y => '.'
     case _ => '^'
   }
@@ -11,7 +9,6 @@ def char(row: Vector[Char], i: Int) = {
 
 def gen(input: Vector[Char]) = {
   val row = '.' +: input :+ '.'
-
   input.indices.map(char(row, _)).toVector
 }
 

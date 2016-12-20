@@ -1,17 +1,13 @@
 import java.security._
 
 def md5(s: String): String = {
-  val hash = MessageDigest.getInstance("MD5");
+  val hash = MessageDigest.getInstance("MD5")
   val hashed = hash.digest(s.getBytes())
-  val hex = new StringBuilder()
 
-  for (i <- 0 until hashed.length) {
-    if ((0xFF & hashed(i)) < 0x10)
-      hex.append("0")
-    hex.append(Integer.toHexString(0xFF & hashed(i)))
-  }
-
-  hex.toString
+  hashed.map {
+    case b if (0xFF & b) < 0x10 => "0" + Integer.toHexString(0xFF & b)
+    case b => Integer.toHexString(0xFF & b)
+  }.mkString
 }
 
 val pwd = Array[Char]('.','.','.','.','.','.','.','.')
