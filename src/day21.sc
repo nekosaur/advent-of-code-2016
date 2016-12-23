@@ -21,21 +21,25 @@ def swap_char(v: Vector[Char], x: Char, y: Char) = {
   v.updated(ix, v(iy)).updated(iy, v(ix))
 }
 
-def rotate_char(v: Vector[Char], x: Char) = v.indexOf(x) match {
+def rotate_char(v: Vector[Char], x: Char, reverse: Boolean) = if (reverse) rotate_char_r(v, x) else rotate_char_f(v, x)
+
+def rotate_char_f(v: Vector[Char], x: Char) = v.indexOf(x) match {
   case i if i >= 4 => rotateRight(v, 1 + i + 1, false)
-  case i => rotateRight(v, 1 + i, false)
+  case i           => rotateRight(v, 1 + i, false)
 }
 
 def rotate_char_r(v: Vector[Char], x: Char) = Stream.continually(1)
                                                     .scanLeft(v)((vv, n) => rotateLeft(vv, n, false))
-                                                    .dropWhile(!rotate_char(_, x).equals(v))
+                                                    .dropWhile(!rotate_char_f(_, x).equals(v))
                                                     .head
 
 def reverse_slice(v: Vector[Char], x: Int, y: Int) = v.patch(x, v.slice(x, y + 1).reverse, y - x + 1)
 
-def move(v: Vector[Char], x: Int, y: Int) = {
-  val vv = v.patch(x, Nil, 1)
-  vv.take(y) ++ Vector(v(x)) ++ vv.drop(y)
+def move(v: Vector[Char], x: Int, y: Int, reverse: Boolean): Vector[Char] = reverse match {
+  case true  => move(v, y, x, false)
+  case false =>
+    val vv = v.patch(x, Nil, 1)
+    vv.take(y) ++ Vector(v(x)) ++ vv.drop(y)
 }
 
 val SwapPos = "^swap position (\\d+) with position (\\d+)".r
@@ -48,13 +52,13 @@ val MovePos = "^move position (\\d+) to position (\\d+)".r
 def solve(input: String, actions: List[String], reverse: Boolean) = {
   val ordered = if (reverse) actions.reverse else actions
   ordered.foldLeft(input.toVector) {
-    case (v, SwapPos(x, y)) => swap_position(v, x.toInt, y.toInt)
-    case (v, SwapChar(x, y)) => swap_char(v, x.head, y.head)
-    case (v, RotateChar(x)) => if (reverse) rotate_char_r(v, x.head) else rotate_char(v, x.head)
-    case (v, RotateDir(dir, x)) if dir == "left" => rotateLeft(v, x.toInt, reverse)
+    case (v, SwapPos(x, y))                       => swap_position(v, x.toInt, y.toInt)
+    case (v, SwapChar(x, y))                      => swap_char(v, x.head, y.head)
+    case (v, RotateChar(x))                       => rotate_char(v, x.head, reverse)
+    case (v, RotateDir(dir, x)) if dir == "left"  => rotateLeft(v, x.toInt, reverse)
     case (v, RotateDir(dir, x)) if dir == "right" => rotateRight(v, x.toInt, reverse)
-    case (v, ReversePos(x, y)) => reverse_slice(v, x.toInt, y.toInt)
-    case (v, MovePos(x, y)) => if (reverse) move(v, y.toInt, x.toInt) else move(v, x.toInt, y.toInt)
+    case (v, ReversePos(x, y))                    => reverse_slice(v, x.toInt, y.toInt)
+    case (v, MovePos(x, y))                       => move(v, x.toInt, y.toInt, reverse)
   }.mkString
 }
 
