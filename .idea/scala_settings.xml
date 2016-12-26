@@ -3,5 +3,6 @@
   <component name="ScalaProjectSettings">
     <option name="autoRunDelay" value="1704" />
     <option name="outputLimit" value="200" />
+    <option name="useEclipseCompatibility" value="true" />
   </component>
 </project>
